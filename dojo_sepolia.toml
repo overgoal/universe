@@ -8,6 +8,8 @@ default = "full_starter_react"
 
 [env]
 rpc_url = "https://api.cartridge.gg/x/starknet/sepolia"
+# Your Cartridge controller address - replace with your actual address
+account_address = "0x45ac786967795b917490e6bb72a7ae5886e20a7904b6a188d3240ead8eeb825"
 
 [writers]
 "full_starter_react" = ["full_starter_react-game"]

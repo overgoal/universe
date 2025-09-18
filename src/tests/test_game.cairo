@@ -20,7 +20,7 @@ mod tests {
     
     #[test]
     #[available_gas(40000000)]
-    fn test_spawn_player() {
+    fn test_create_player() {
         // Create test environment
         let world = create_test_world();
         let game_system = create_game_system(world);
@@ -28,22 +28,28 @@ mod tests {
         // Set the caller address for the test
         cheat_caller_address(PLAYER());
         
-        // Test spawning a player
-        game_system.spawn_player();
+        // Test creating a player
+        let player_id: felt252 = 0x123;
+        game_system.create_player(player_id);
         
         // Verify player was created successfully
-        let player: Player = world.read_model(PLAYER());
+        let player: Player = world.read_model(player_id);
         
         // Basic player validation
-        assert(player.owner == PLAYER(), 'Player owner should match');
-        assert(player.experience == 0, 'Player starts with 0 exp');
-        assert(player.health == 100, 'Player starts with 100 health');
-        assert(player.coins == 0, 'Player starts with 0 coins');
+        assert(player.id == player_id, 'Player ID should match');
+        assert(player.user_id != 0, 'Player should have user_id');
+        assert(player.created_at > 0, 'Player should have created_at');
+        assert(player.fame == 0, 'Player starts with 0 fame');
+        assert(player.charisma == 0, 'Player starts with 0 charisma');
+        assert(player.stamina == 0, 'Player starts with 0 stamina');
+        assert(player.intelligence == 0, 'Player starts with 0 intelligence');
+        assert(player.leadership == 0, 'Player starts with 0 leadership');
+        assert(player.universe_currency == 0, 'Player starts with 0 currency');
     }
     
     #[test]
     #[available_gas(40000000)]
-    fn test_train_player() {
+    fn test_update_player_attributes() {
         // Create test environment
         let world = create_test_world();
         let game_system = create_game_system(world);
@@ -51,23 +57,26 @@ mod tests {
         // Set the caller address for the test
         cheat_caller_address(PLAYER());
         
-        // Spawn a player first
-        game_system.spawn_player();
+        // Create a player first
+        let player_id: felt252 = 0x123;
+        game_system.create_player(player_id);
         
-        // Train the player
-        game_system.train();
+        // Update player attributes
+        game_system.update_attributes(player_id, 10, 15, 20, 25, 30);
         
-        // Verify player state after training
-        let player: Player = world.read_model(PLAYER());
+        // Verify player state after attribute update
+        let player: Player = world.read_model(player_id);
         
-        assert(player.experience == 10, 'Player should have 10 exp');
-        assert(player.health == 100, 'Health should remain 100');
-        assert(player.coins == 0, 'Coins should remain 0');
+        assert(player.fame == 10, 'Fame should be 10');
+        assert(player.charisma == 15, 'Charisma should be 15');
+        assert(player.stamina == 20, 'Stamina should be 20');
+        assert(player.intelligence == 25, 'Intelligence should be 25');
+        assert(player.leadership == 30, 'Leadership should be 30');
     }
     
     #[test]
     #[available_gas(40000000)]
-    fn test_multiple_training_sessions() {
+    fn test_add_currency() {
         // Create test environment
         let world = create_test_world();
         let game_system = create_game_system(world);
@@ -75,22 +84,22 @@ mod tests {
         // Set the caller address for the test
         cheat_caller_address(PLAYER());
         
-        // Spawn a player first
-        game_system.spawn_player();
+        // Create a player first
+        let player_id: felt252 = 0x123;
+        game_system.create_player(player_id);
         
-        // Train multiple times
-        game_system.train(); // +10 exp = 10
-        game_system.train(); // +10 exp = 20
-        game_system.train(); // +10 exp = 30
+        // Add currency
+        game_system.add_currency(player_id, 1000);
         
-        // Verify cumulative experience
-        let player: Player = world.read_model(PLAYER());
-        assert(player.experience == 30, 'Player should have 30 exp');
+        // Verify player state after adding currency
+        let player: Player = world.read_model(player_id);
+        
+        assert(player.universe_currency == 1000, 'Currency should be 1000');
     }
     
     #[test]
     #[available_gas(40000000)]
-    fn test_mine_coins() {
+    fn test_spend_currency() {
         // Create test environment
         let world = create_test_world();
         let game_system = create_game_system(world);
@@ -98,23 +107,25 @@ mod tests {
         // Set the caller address for the test
         cheat_caller_address(PLAYER());
         
-        // Spawn a player first
-        game_system.spawn_player();
+        // Create a player first
+        let player_id: felt252 = 0x123;
+        game_system.create_player(player_id);
         
-        // Mine coins
-        game_system.mine();
+        // Add currency first
+        game_system.add_currency(player_id, 1000);
         
-        // Verify player state after mining
-        let player: Player = world.read_model(PLAYER());
+        // Spend some currency
+        game_system.spend_currency(player_id, 300);
         
-        assert(player.coins == 5, 'Player should have 5 coins');
-        assert(player.health == 95, 'Health should be 95');
-        assert(player.experience == 0, 'Experience should remain 0');
+        // Verify player state after spending currency
+        let player: Player = world.read_model(player_id);
+        
+        assert(player.universe_currency == 700, 'Currency should be 700');
     }
     
     #[test]
     #[available_gas(40000000)]
-    fn test_multiple_mining_sessions() {
+    fn test_record_login() {
         // Create test environment
         let world = create_test_world();
         let game_system = create_game_system(world);
@@ -122,50 +133,25 @@ mod tests {
         // Set the caller address for the test
         cheat_caller_address(PLAYER());
         
-        // Spawn a player first
-        game_system.spawn_player();
+        // Create a player first
+        let player_id: felt252 = 0x123;
+        game_system.create_player(player_id);
         
-        // Mine multiple times
-        game_system.mine(); // +5 coins, -5 health = 5 coins, 95 health
-        game_system.mine(); // +5 coins, -5 health = 10 coins, 90 health
-        game_system.mine(); // +5 coins, -5 health = 15 coins, 85 health
+        let initial_player: Player = world.read_model(player_id);
+        let initial_login_time = initial_player.last_login_at;
         
-        // Verify cumulative effects
-        let player: Player = world.read_model(PLAYER());
-        assert(player.coins == 15, 'Player should have 15 coins');
-        assert(player.health == 85, 'Player should have 85 health');
-    }
-    
-    #[test]
-    #[available_gas(40000000)]
-    fn test_rest_player() {
-        // Create test environment
-        let world = create_test_world();
-        let game_system = create_game_system(world);
+        // Record login
+        game_system.record_login(player_id);
         
-        // Set the caller address for the test
-        cheat_caller_address(PLAYER());
+        // Verify login time was updated
+        let updated_player: Player = world.read_model(player_id);
         
-        // Spawn a player first
-        game_system.spawn_player();
-        
-        // Mine to reduce health first
-        game_system.mine(); // Health becomes 95
-        
-        // Rest to recover health
-        game_system.rest();
-        
-        // Verify player state after resting
-        let player: Player = world.read_model(PLAYER());
-        
-        assert(player.health == 115, 'Health should be 115');
-        assert(player.coins == 5, 'Coins should remain 5');
-        assert(player.experience == 0, 'Experience should remain 0');
+        assert(updated_player.last_login_at >= initial_login_time, 'Login time should be updated');
     }
     
     #[test]
     #[available_gas(80000000)]
-    fn test_complete_game_flow() {
+    fn test_complete_player_flow() {
         // Create test environment
         let world = create_test_world();
         let game_system = create_game_system(world);
@@ -173,22 +159,25 @@ mod tests {
         // Set the caller address for the test
         cheat_caller_address(PLAYER());
         
-        // Spawn a player
-        game_system.spawn_player();
+        // Create a player
+        let player_id: felt252 = 0x123;
+        game_system.create_player(player_id);
         
         // Perform various actions
-        game_system.train();  // +10 exp
-        game_system.mine();   // +5 coins, -5 health
-        game_system.rest();   // +20 health
-        game_system.train();  // +10 exp
-        game_system.mine();   // +5 coins, -5 health
+        game_system.update_attributes(player_id, 50, 40, 60, 70, 55);  // Update attributes
+        game_system.add_currency(player_id, 10000);   // Add currency
+        game_system.spend_currency(player_id, 3000);  // Spend some currency
+        game_system.record_login(player_id);          // Record login
         
         // Verify final state
-        let player: Player = world.read_model(PLAYER());
+        let player: Player = world.read_model(player_id);
         
-        assert(player.experience == 20, 'Should have 20 experience');
-        assert(player.coins == 10, 'Should have 10 coins');
-        assert(player.health == 110, 'Should have 110 health'); // 100 - 5 + 20 - 5 = 110
+        assert(player.fame == 50, 'Should have 50 fame');
+        assert(player.charisma == 40, 'Should have 40 charisma');
+        assert(player.stamina == 60, 'Should have 60 stamina');
+        assert(player.intelligence == 70, 'Should have 70 intelligence');
+        assert(player.leadership == 55, 'Should have 55 leadership');
+        assert(player.universe_currency == 7000, 'Should have 7000 currency');
     }
    
    

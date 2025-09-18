@@ -1328,8 +1328,8 @@
   },
   "contracts": [
     {
-      "address": "0x6700e85cb74fa403b21d320758bd991cb90bf84dc5de8b8573d21fe71f7fc76",
-      "class_hash": "0x701ef74c653b7c3eacadf65d7186be46dbc25b4959575dc25ff5ef24643a801",
+      "address": "0x4c8d7db18625156595877bd3e5c9accf25b3504de7ea445adc92156bc6ff6e9",
+      "class_hash": "0x1305b131df1fae41e669e4337494ed9ddedbab85fe3ce447b8ba41beb88f433",
       "abi": [
         {
           "type": "impl",
@@ -1399,29 +1399,89 @@
           "items": [
             {
               "type": "function",
-              "name": "spawn_player",
-              "inputs": [],
+              "name": "create_player",
+              "inputs": [
+                {
+                  "name": "player_id",
+                  "type": "core::felt252"
+                }
+              ],
               "outputs": [],
               "state_mutability": "external"
             },
             {
               "type": "function",
-              "name": "train",
-              "inputs": [],
+              "name": "update_attributes",
+              "inputs": [
+                {
+                  "name": "player_id",
+                  "type": "core::felt252"
+                },
+                {
+                  "name": "fame",
+                  "type": "core::integer::u16"
+                },
+                {
+                  "name": "charisma",
+                  "type": "core::integer::u16"
+                },
+                {
+                  "name": "stamina",
+                  "type": "core::integer::u16"
+                },
+                {
+                  "name": "intelligence",
+                  "type": "core::integer::u16"
+                },
+                {
+                  "name": "leadership",
+                  "type": "core::integer::u16"
+                }
+              ],
               "outputs": [],
               "state_mutability": "external"
             },
             {
               "type": "function",
-              "name": "mine",
-              "inputs": [],
+              "name": "add_currency",
+              "inputs": [
+                {
+                  "name": "player_id",
+                  "type": "core::felt252"
+                },
+                {
+                  "name": "amount",
+                  "type": "core::integer::u128"
+                }
+              ],
               "outputs": [],
               "state_mutability": "external"
             },
             {
               "type": "function",
-              "name": "rest",
-              "inputs": [],
+              "name": "spend_currency",
+              "inputs": [
+                {
+                  "name": "player_id",
+                  "type": "core::felt252"
+                },
+                {
+                  "name": "amount",
+                  "type": "core::integer::u128"
+                }
+              ],
+              "outputs": [],
+              "state_mutability": "external"
+            },
+            {
+              "type": "function",
+              "name": "record_login",
+              "inputs": [
+                {
+                  "name": "player_id",
+                  "type": "core::felt252"
+                }
+              ],
               "outputs": [],
               "state_mutability": "external"
             }
@@ -1519,12 +1579,6 @@
         },
         {
           "type": "event",
-          "name": "achievement::components::achievable::AchievableComponent::Event",
-          "kind": "enum",
-          "variants": []
-        },
-        {
-          "type": "event",
           "name": "full_starter_react::systems::game::game::Event",
           "kind": "enum",
           "variants": [
@@ -1537,11 +1591,6 @@
               "name": "WorldProviderEvent",
               "type": "dojo::contract::components::world_provider::world_provider_cpt::Event",
               "kind": "nested"
-            },
-            {
-              "name": "AchievableEvent",
-              "type": "achievement::components::achievable::AchievableComponent::Event",
-              "kind": "flat"
             }
           ]
         }
@@ -1551,10 +1600,11 @@
       "selector": "0x4c3a60c69390276b1cdfe902f6305743f3668c5ab9e68a96105dea78d8ccd61",
       "systems": [
         "dojo_init",
-        "spawn_player",
-        "train",
-        "mine",
-        "rest",
+        "create_player",
+        "update_attributes",
+        "add_currency",
+        "spend_currency",
+        "record_login",
         "upgrade"
       ]
     }
@@ -1563,24 +1613,17 @@
   "models": [
     {
       "members": [],
-      "class_hash": "0x252e99793931b5225530b751c1246f47f4db7b2eed99bd5c3e6bbad9268668a",
+      "class_hash": "0x38291382ba026052034da19bd02402e68b91d6966c364e8e13b30be3701d4ea",
       "tag": "full_starter_react-Player",
       "selector": "0x13986cc36a0f8437378d1efa3068103f37b22361ff3cc31be99d50ddf2e4187"
-    }
-  ],
-  "events": [
-    {
-      "members": [],
-      "class_hash": "0x702d5440a155e0704b268f8d6dbf74cb8ae09b164064fe3b4f896cf725dcac7",
-      "tag": "full_starter_react-TrophyCreation",
-      "selector": "0x3ee5e843803cc1ec151088d980d09c665c10f9282fea6204ebec09706791977"
     },
     {
       "members": [],
-      "class_hash": "0x113e43bc604068a5811205b126a3e318b21e5c72746138efa6fb40277067f00",
-      "tag": "full_starter_react-TrophyProgression",
-      "selector": "0x6f15029fdaa4c14b9f4690bad922d22e5646466e5fe4c688e633d67028b68d8"
+      "class_hash": "0x3e9574a89e271cab98b35d14d8ff51f4e214c218bc7394bdd6b6c6827ce5f8",
+      "tag": "full_starter_react-User",
+      "selector": "0x13f7b27c7499b3addaec78b7a273067addca85507a211cca2a06c488f442849"
     }
   ],
+  "events": [],
   "external_contracts": []
 }

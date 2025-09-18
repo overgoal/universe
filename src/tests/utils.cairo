@@ -15,6 +15,7 @@ pub mod utils {
 
     // Models imports
     use full_starter_react::models::player::{m_Player};
+    use full_starter_react::models::user::{m_User};
 
     // ------- Constants -------
     pub fn PLAYER() -> ContractAddress {
@@ -27,8 +28,7 @@ pub mod utils {
             namespace: "full_starter_react",
             resources: [
                 TestResource::Model(m_Player::TEST_CLASS_HASH),
-                TestResource::Event(achievement::events::index::e_TrophyCreation::TEST_CLASS_HASH),
-                TestResource::Event(achievement::events::index::e_TrophyProgression::TEST_CLASS_HASH),
+                TestResource::Model(m_User::TEST_CLASS_HASH),
                 TestResource::Contract(game::TEST_CLASS_HASH),
             ].span(),
         };
