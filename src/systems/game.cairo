@@ -2,10 +2,11 @@
 #[starknet::interface]
 pub trait IGame<T> {
     // --------- Core gameplay methods ---------
-    fn spawn_player(ref self: T);
-    fn train(ref self: T);
-    fn mine(ref self: T);
-    fn rest(ref self: T);
+    fn create_player(ref self: T, player_id: felt252);
+    fn update_attributes(ref self: T, player_id: felt252, fame: u16, charisma: u16, stamina: u16, intelligence: u16, leadership: u16);
+    fn add_currency(ref self: T, player_id: felt252, amount: u128);
+    fn spend_currency(ref self: T, player_id: felt252, amount: u128);
+    fn record_login(ref self: T, player_id: felt252);
 }
 
 #[dojo::contract]
@@ -13,23 +14,18 @@ pub mod game {
     // Local import
     use super::{IGame};
 
-    // Achievement import
-    use full_starter_react::achievements::achievement::{Achievement, AchievementTrait};
+
 
     // Store import
     use full_starter_react::store::{StoreTrait};
 
-    // Constant import
-    use full_starter_react::constants;
+
 
     // Models import
     use full_starter_react::models::player::{PlayerAssert};
+    use full_starter_react::models::user::{UserAssert};
 
-    // Dojo achievements imports
-    use achievement::components::achievable::AchievableComponent;
-    use achievement::store::{StoreTrait as AchievementStoreTrait};
-    component!(path: AchievableComponent, storage: achievable, event: AchievableEvent);
-    impl AchievableInternalImpl = AchievableComponent::InternalImpl<ContractState>;
+
 
     // Dojo Imports
     #[allow(unused_imports)]
@@ -39,129 +35,69 @@ pub mod game {
     #[allow(unused_imports)]
     use dojo::event::EventStorage;
 
-    use starknet::{get_block_timestamp};
+
 
     #[storage]
-    struct Storage {
-        #[substorage(v0)]
-        achievable: AchievableComponent::Storage,
-    }
+    struct Storage {}
 
     #[event]
     #[derive(Drop, starknet::Event)]
-    enum Event {
-        #[flat]
-        AchievableEvent: AchievableComponent::Event,
-    }
+    enum Event {}
 
     // Constructor
-    fn dojo_init(ref self: ContractState) {
-        let mut world = self.world(@"full_starter_react");
-
-        let mut achievement_id: u8 = 1;
-        while achievement_id <= constants::ACHIEVEMENTS_COUNT {
-            let achievement: Achievement = achievement_id.into();
-            self
-                .achievable
-                .create(
-                    world,
-                    id: achievement.identifier(),
-                    hidden: achievement.hidden(),
-                    index: achievement.index(),
-                    points: achievement.points(),
-                    start: achievement.start(),
-                    end: achievement.end(),
-                    group: achievement.group(),
-                    icon: achievement.icon(),
-                    title: achievement.title(),
-                    description: achievement.description(),
-                    tasks: achievement.tasks(),
-                    data: achievement.data(),
-                );
-            achievement_id += 1;
-        }
-    }
+    fn dojo_init(ref self: ContractState) {}
 
     // Implementation of the interface methods
     #[abi(embed_v0)]
     impl GameImpl of IGame<ContractState> {
         
         // Method to create a new player
-        fn spawn_player(ref self: ContractState) {
+        fn create_player(ref self: ContractState, player_id: felt252) {
             let mut world = self.world(@"full_starter_react");
             let store = StoreTrait::new(world);
+
+            // Get caller as user_id (assuming caller has a User account)
+            let caller = starknet::get_caller_address();
+            let user_id: felt252 = caller.into();
 
             // Create new player
-            store.create_player();
+            store.create_player(player_id, user_id);
         }
 
-        // Method to train player (+10 experience)
-        fn train(ref self: ContractState) {
+        // Method to update player attributes
+        fn update_attributes(ref self: ContractState, player_id: felt252, fame: u16, charisma: u16, stamina: u16, intelligence: u16, leadership: u16) {
             let mut world = self.world(@"full_starter_react");
             let store = StoreTrait::new(world);
-            let achievement_store = AchievementStoreTrait::new(world);
 
-            let player = store.read_player();
-
-            // Train player
-            store.train_player();
-
-            // Emit events for achievements progression
-            let mut achievement_id = constants::ACHIEVEMENTS_INITIAL_ID; // 1
-            let stop = constants::ACHIEVEMENTS_COUNT; // 5
-            
-            while achievement_id <= stop {
-                let task: Achievement = achievement_id.into(); // u8 to Achievement
-                let task_identifier = task.identifier(); // Achievement identifier is the task to complete
-                achievement_store.progress(player.owner.into(), task_identifier, 1, get_block_timestamp());
-                achievement_id += 1;
-            };
+            // Update player attributes
+            store.update_player_attributes(player_id, fame, charisma, stamina, intelligence, leadership);
         }
 
-        // Method to mine coins (+5 coins, -5 health)
-        fn mine(ref self: ContractState) {
+        // Method to add currency to player
+        fn add_currency(ref self: ContractState, player_id: felt252, amount: u128) {
             let mut world = self.world(@"full_starter_react");
             let store = StoreTrait::new(world);
-            let achievement_store = AchievementStoreTrait::new(world);
-
-            let player = store.read_player();
            
-            // Mine coins
-            store.mine_coins();
-
-            // Emit events for achievements progression
-            let mut achievement_id = constants::ACHIEVEMENTS_INITIAL_ID; // 1
-            let stop = constants::ACHIEVEMENTS_COUNT; // 5
-            
-            while achievement_id <= stop {
-                let task: Achievement = achievement_id.into(); // u8 to Achievement
-                let task_identifier = task.identifier(); // Achievement identifier is the task to complete
-                achievement_store.progress(player.owner.into(), task_identifier, 1, get_block_timestamp());
-                achievement_id += 1;
-            };
+            // Add currency
+            store.add_player_currency(player_id, amount);
         }
 
-        // Method to rest player (+20 health)
-        fn rest(ref self: ContractState) {
+        // Method to spend player currency
+        fn spend_currency(ref self: ContractState, player_id: felt252, amount: u128) {
             let mut world = self.world(@"full_starter_react");
             let store = StoreTrait::new(world);
-            let achievement_store = AchievementStoreTrait::new(world);
 
-            let player = store.read_player();
+            // Spend currency
+            store.spend_player_currency(player_id, amount);
+        }
 
-            // Rest player
-            store.rest_player();
+        // Method to record player login
+        fn record_login(ref self: ContractState, player_id: felt252) {
+            let mut world = self.world(@"full_starter_react");
+            let store = StoreTrait::new(world);
 
-            // Emit events for achievements progression
-            let mut achievement_id = constants::ACHIEVEMENTS_INITIAL_ID; // 1
-            let stop = constants::ACHIEVEMENTS_COUNT; // 5
-            
-            while achievement_id <= stop {
-                let task: Achievement = achievement_id.into(); // u8 to Achievement
-                let task_identifier = task.identifier(); // Achievement identifier is the task to complete
-                achievement_store.progress(player.owner.into(), task_identifier, 1, get_block_timestamp());
-                achievement_id += 1;
-            };
+            // Record login
+            store.record_player_login(player_id);
         }
 
     }

@@ -2,14 +2,6 @@
 version = 1
 
 [[package]]
-name = "achievement"
-version = "0.0.0"
-source = "git+https://github.com/cartridge-gg/arcade?branch=main#b67af779c377fb16f07cdf86cd3915801888a369"
-dependencies = [
- "dojo",
-]
-
-[[package]]
 name = "dojo"
 version = "1.6.0"
 source = "git+https://github.com/dojoengine/dojo?tag=v1.6.0#c7d8b321abc711c14bddcf76f41587f6ef21c356"
@@ -34,7 +26,6 @@ source = "git+https://github.com/dojoengine/dojo?tag=v1.6.0#c7d8b321abc711c14bdd
 name = "full_starter_react"
 version = "0.1.0"
 dependencies = [
- "achievement",
  "dojo",
  "dojo_cairo_test",
 ]

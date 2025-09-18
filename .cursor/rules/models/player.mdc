@@ -1,0 +1,175 @@
+---
+description: Model for Player Entity
+globs: 
+alwaysApply: false
+---
+
+Purpose
+
+Player is a Dojo Model in an ECS world built with Cairo. It defines the storage layout for player game entities in the system. Each entity that has this model will store a unique identifier, foreign key reference to a User, timestamps for tracking activity, and core gameplay attributes like fame, charisma, stamina, intelligence, leadership, and universe currency.
+
+Engine / Language
+
+Engine: Dojo (on Starknet)
+
+Language: Cairo
+
+Storage types available: felt252, ContractAddress, u8/u16/u32/u64/u128, Span<felt252> (when needed)
+
+Field Specifications
+
+id — Primary key. Stored as a felt252, representing a unique immutable identifier for this player entity. Generated either on-chain or off-chain and hashed to fit in a felt. Immutable after creation.
+
+user_id — Foreign key to User.owner. Stored as a felt252. Indexed for 1→N lookups to enable multiple players per user account. References the User model's owner field.
+
+created_at — Stored as a u64 representing Unix epoch time in seconds (UTC). Set once on creation and never changed.
+
+last_updated_at — Stored as a u64 representing Unix epoch time in seconds. Bumped on any persisted change to track recent activity.
+
+last_login_at — Stored as a u64 representing Unix epoch time in seconds. Set on login/session start to track user engagement.
+
+fame — Stored as a u16 (0–65535). Core gameplay attribute representing player reputation or renown.
+
+charisma — Stored as a u16 (0–65535). Core gameplay attribute affecting social interactions and influence.
+
+stamina — Stored as a u16 (0–65535). Core gameplay attribute affecting endurance and physical activities.
+
+intelligence — Stored as a u16 (0–65535). Core gameplay attribute affecting learning, strategy, and mental challenges.
+
+leadership — Stored as a u16 (0–65535). Core gameplay attribute affecting ability to guide and inspire others.
+
+universe_currency — Stored as a u128 providing large on-chain balance headroom for in-game economy transactions.
+
+Keys and Indexes
+
+Primary key: id (felt252)
+
+Foreign key: user_id references User.owner
+
+Recommended indexes: user_id for 1→N lookups, last_login_at for activity queries
+
+Uniqueness: id must be unique, user_id allows multiple players per user
+
+Encoding and Validation
+
+id: Represented as a single felt252. Do not store raw UUID bytes; use hash or integer form. Must be non-zero.
+
+user_id: Must reference a valid User.owner. Cannot be zero.
+
+created_at: Must be greater than 0 and set to the current timestamp on creation.
+
+last_updated_at: Must be greater than or equal to created_at. Updated on any field changes.
+
+last_login_at: Must be greater than or equal to created_at. Updated on session activity.
+
+fame, charisma, stamina, intelligence, leadership: Valid range 0–65535 (u16 bounds).
+
+universe_currency: Valid range 0–2^128-1, allowing for large economic values.
+
+Invariants
+
+id never changes once set.
+
+created_at never changes once set.
+
+last_updated_at >= created_at and is updated on any field modification.
+
+last_login_at >= created_at and tracks user session activity.
+
+All attribute values (fame, charisma, etc.) must stay within u16 bounds.
+
+universe_currency must stay within u128 bounds.
+
+Dojo Implementation Details
+
+Derives: Copy, Drop, Serde, IntrospectPacked, Debug
+
+Uses #[dojo::model] attribute
+
+Implements ZeroablePlayerTrait for Zero<Player> trait with zero(), is_zero(), is_non_zero()
+
+Implements PlayerAssert trait with assert_exists() and assert_not_exists()
+
+Follows same pattern as User model in codebase
+
+Import constants module and use ZERO_ADDRESS() for zero values
+
+Typical Systems
+
+create_player(user_id, initial_attributes): Creates player for a user with starting attribute values.
+
+update_player_attributes(id, new_values): Updates gameplay attributes and bumps last_updated_at.
+
+record_login(id): Updates last_login_at timestamp for activity tracking.
+
+add_currency(id, amount): Safely adds to universe_currency balance.
+
+spend_currency(id, amount): Safely deducts from universe_currency with balance checks.
+
+player_exists(id): Checks if a player is registered using is_non_zero().
+
+Store Operations
+
+read_player_from_id(id): Reads player by primary key
+
+read_players_by_user(user_id): Reads all players for a specific user
+
+write_player(player): Writes player to storage
+
+update_last_activity(id): Updates last_updated_at timestamp
+
+Example
+
+A player entity with ID 0xdef456 might have a Player model with:
+
+id = 0xdef456 (felt252)
+
+user_id = 0xabc123 (felt252, references User.owner)
+
+created_at = 1736559000
+
+last_updated_at = 1736559500
+
+last_login_at = 1736559400
+
+fame = 150
+
+charisma = 200
+
+stamina = 180
+
+intelligence = 220
+
+leadership = 175
+
+universe_currency = 50000000000000000000 (u128)
+
+Reasoning Hints for Assistant
+
+Use felt252 for the primary key (id field) to allow flexible identifier generation.
+
+Use felt252 for user_id foreign key to reference User.owner field.
+
+For time values, use u64 with Unix epoch seconds.
+
+Use u16 for gameplay attributes to provide good range while conserving storage.
+
+Use u128 for currency to handle large economic values without overflow.
+
+Follow the Zero trait pattern for existence checking (is_zero/is_non_zero).
+
+Use assert_exists() and assert_not_exists() for validation in systems.
+
+Always update last_updated_at when modifying any player data.
+
+Import constants module and use appropriate zero values.
+
+Non-Goals
+
+No authentication or key management (handled by User model).
+
+No personally identifiable information beyond game attributes.
+
+No lists, collections, or nested structures in this core model.
+
+No direct ContractAddress usage for primary key - use felt252 for flexibility.

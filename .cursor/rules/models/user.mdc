@@ -1,0 +1,115 @@
+---
+description: Model for User Entity
+globs: 
+alwaysApply: false
+---
+
+Purpose
+
+User is a Dojo Model in an ECS world built with Cairo. It defines the storage layout for player accounts in the game. Each entity that has this model will store a contract address identifier, a display username, and the timestamp of when it was created.
+
+Engine / Language
+
+Engine: Dojo (on Starknet)
+
+Language: Cairo
+
+Storage types available: ContractAddress, felt252, u8/u16/u32/u64, Span<felt252> (when needed)
+
+Field Specifications
+
+owner — Primary key. Stored as a ContractAddress, representing the account that owns this user profile. Follows Dojo convention of using ContractAddress as entity keys. Immutable after creation.
+
+username — Stored as a felt252 short string (≤31 ASCII chars). Case-insensitive by convention. Should be unique across all User models.
+
+created_at — Stored as a u64 representing Unix epoch time in seconds. Set once on creation and never changed.
+
+Keys and Indexes
+
+Primary key: owner (ContractAddress)
+
+Recommended index: username for fast lookups
+
+Uniqueness: owner and username must be unique, enforced by system logic
+
+Encoding and Validation
+
+owner: Must be a valid non-zero ContractAddress. Uses Dojo's standard entity keying pattern.
+
+username: Must be ≤31 characters, contain only [a-z0-9_.], and be normalized to lowercase before storage.
+
+created_at: Must be greater than 0 and set to the current timestamp on creation.
+
+Invariants
+
+owner never changes once set.
+
+created_at never changes once set.
+
+username can change only via a dedicated rename system and must remain unique.
+
+Dojo Implementation Details
+
+Derives: Copy, Drop, Serde, IntrospectPacked, Debug
+
+Uses #[dojo::model] attribute
+
+Implements ZeroableUserTrait for Zero<User> trait with zero(), is_zero(), is_non_zero()
+
+Implements UserAssert trait with assert_exists() and assert_not_exists()
+
+Follows same pattern as Player model in codebase
+
+Typical Systems
+
+create_user(username): Creates user for caller address with current timestamp.
+
+create_user_with_address(owner, username): Creates user for specific address.
+
+rename_user(new_username): Updates username for caller while preserving uniqueness.
+
+rename_user_with_address(owner, new_username): Updates username for specific address.
+
+user_exists(owner): Checks if a user is registered using is_non_zero().
+
+Store Operations
+
+read_user(): Reads user for caller address
+
+read_user_from_address(owner): Reads user for specific address
+
+write_user(user): Writes user to storage
+
+Example
+
+An entity with owner address 0xabc123 might have a User model with:
+
+owner = 0xabc123 (ContractAddress)
+
+username = "matias"
+
+created_at = 1736559000
+
+Reasoning Hints for Assistant
+
+Always use ContractAddress for the primary key (owner field) to match Dojo conventions.
+
+For time values, use u64 with Unix epoch seconds.
+
+Username stored as felt252 short string.
+
+Follow the Zero trait pattern for existence checking (is_zero/is_non_zero).
+
+Use assert_exists() and assert_not_exists() for validation in systems.
+
+Import constants module and use ZERO_ADDRESS() for zero values.
+
+Non-Goals
+
+No authentication or key management.
+
+No personally identifiable information beyond the public username.
+
+No lists, collections, or nested structures in this core model.
+
+No UUID or felt252 identifiers - use ContractAddress for Dojo compatibility.
