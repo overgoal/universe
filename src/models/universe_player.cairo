@@ -1,9 +1,9 @@
 use core::num::traits::zero::Zero;
 
-// Player model representing a game entity in the system
+// UniversePlayer model representing a game entity in the system
 #[derive(Copy, Drop, Serde, IntrospectPacked, Debug)]
 #[dojo::model]
-pub struct Player {
+pub struct UniversePlayer {
     #[key]
     pub id: felt252,                    // Primary key - unique immutable identifier
     pub user_id: felt252,               // Foreign key to User.owner
@@ -13,14 +13,20 @@ pub struct Player {
     pub fame: u16,                      // Player reputation (0-65535)
     pub charisma: u16,                  // Social influence attribute (0-65535)
     pub stamina: u16,                   // Physical endurance attribute (0-65535)
+    pub strength: u16,                  // Physical strength attribute (0-65535)
+    pub agility: u16,                   // Speed and agility attribute (0-65535)
     pub intelligence: u16,              // Mental capability attribute (0-65535)
-    pub leadership: u16,                // Leadership ability attribute (0-65535)
     pub universe_currency: u128,        // In-game currency balance
+    pub body_type: u8,                  // Body type (0, 1, or 2)
+    pub skin_color: u8,                 // Skin color (0, 1, or 2)
+    pub beard_type: u8,                 // Beard type (0 or 1)
+    pub hair_type: u8,                  // Hair type (0, 1, or 2)
+    pub hair_color: u8,                 // Hair color (0 or 1)
 }
 
 // Traits Implementations
 #[generate_trait]
-pub impl PlayerImpl of PlayerTrait {
+pub impl UniversePlayerImpl of UniversePlayerTrait {
     fn new(
         id: felt252,
         user_id: felt252,
@@ -28,16 +34,22 @@ pub impl PlayerImpl of PlayerTrait {
         fame: u16,
         charisma: u16,
         stamina: u16,
+        strength: u16,
+        agility: u16,
         intelligence: u16,
-        leadership: u16,
         universe_currency: u128,
-    ) -> Player {
+        body_type: u8,
+        skin_color: u8,
+        beard_type: u8,
+        hair_type: u8,
+        hair_color: u8,
+    ) -> UniversePlayer {
         // Validate inputs
         assert(id != 0, 'Player ID cannot be zero');
         assert(user_id != 0, 'User ID cannot be zero');
         assert(created_at > 0, 'Created timestamp must be > 0');
 
-        Player {
+        UniversePlayer {
             id,
             user_id,
             created_at,
@@ -46,54 +58,65 @@ pub impl PlayerImpl of PlayerTrait {
             fame,
             charisma,
             stamina,
+            strength,
+            agility,
             intelligence,
-            leadership,
             universe_currency,
+            body_type,
+            skin_color,
+            beard_type,
+            hair_type,
+            hair_color,
         }
     }
 
-    fn add_currency(ref self: Player, amount: u128) { 
+    fn add_currency(ref self: UniversePlayer, amount: u128) { 
         self.universe_currency += amount;
         self.update_timestamp();
     }
 
-    fn spend_currency(ref self: Player, amount: u128) {
+    fn spend_currency(ref self: UniversePlayer, amount: u128) {
         assert(self.universe_currency >= amount, 'Insufficient currency');
         self.universe_currency -= amount;
         self.update_timestamp();
     }
 
-    fn add_fame(ref self: Player, amount: u16) { 
+    fn add_fame(ref self: UniversePlayer, amount: u16) { 
         self.fame = self.fame + amount;
         self.update_timestamp();
     }
 
-    fn add_charisma(ref self: Player, amount: u16) { 
+    fn add_charisma(ref self: UniversePlayer, amount: u16) { 
         self.charisma = self.charisma + amount;
         self.update_timestamp();
     }
 
-    fn add_stamina(ref self: Player, amount: u16) { 
+    fn add_stamina(ref self: UniversePlayer, amount: u16) { 
         self.stamina = self.stamina + amount;
         self.update_timestamp();
     }
 
-    fn add_intelligence(ref self: Player, amount: u16) { 
+    fn add_strength(ref self: UniversePlayer, amount: u16) { 
+        self.strength = self.strength + amount;
+        self.update_timestamp();
+    }
+
+    fn add_agility(ref self: UniversePlayer, amount: u16) { 
+        self.agility = self.agility + amount;
+        self.update_timestamp();
+    }
+
+    fn add_intelligence(ref self: UniversePlayer, amount: u16) { 
         self.intelligence = self.intelligence + amount;
         self.update_timestamp();
     }
 
-    fn add_leadership(ref self: Player, amount: u16) { 
-        self.leadership = self.leadership + amount;
-        self.update_timestamp();
-    }
-
-    fn update_login_time(ref self: Player, timestamp: u64) {
+    fn update_login_time(ref self: UniversePlayer, timestamp: u64) {
         self.last_login_at = timestamp;
         self.update_timestamp();
     }
 
-    fn update_timestamp(ref self: Player) {
+    fn update_timestamp(ref self: UniversePlayer) {
         // This would be set to current block timestamp in actual usage
         // For now, we increment to show it was updated
         self.last_updated_at += 1;
@@ -101,22 +124,22 @@ pub impl PlayerImpl of PlayerTrait {
 }
 
 #[generate_trait]
-pub impl PlayerAssert of PlayerAssertTrait {
+pub impl UniversePlayerAssert of UniversePlayerAssertTrait {
     #[inline(always)]
-    fn assert_exists(self: Player) {
+    fn assert_exists(self: UniversePlayer) {
         assert(self.is_non_zero(), 'Player: Does not exist');
     }
 
     #[inline(always)]
-    fn assert_not_exists(self: Player) {
+    fn assert_not_exists(self: UniversePlayer) {
         assert(self.is_zero(), 'Player: Already exist');
     }
 }
 
-pub impl ZeroablePlayerTrait of Zero<Player> {
+pub impl ZeroableUniversePlayerTrait of Zero<UniversePlayer> {
     #[inline(always)]
-    fn zero() -> Player {
-        Player {
+    fn zero() -> UniversePlayer {
+        UniversePlayer {
             id: 0,
             user_id: 0,
             created_at: 0,
@@ -125,19 +148,25 @@ pub impl ZeroablePlayerTrait of Zero<Player> {
             fame: 0,
             charisma: 0,
             stamina: 0,
+            strength: 0,
+            agility: 0,
             intelligence: 0,
-            leadership: 0,
             universe_currency: 0,
+            body_type: 0,
+            skin_color: 0,
+            beard_type: 0,
+            hair_type: 0,
+            hair_color: 0,
         }
     }
 
     #[inline(always)]
-    fn is_zero(self: @Player) -> bool {
-       *self.id == 0
+    fn is_zero(self: @UniversePlayer) -> bool {
+       *self.user_id == 0 && *self.created_at == 0
     }
 
     #[inline(always)]
-    fn is_non_zero(self: @Player) -> bool {
+    fn is_non_zero(self: @UniversePlayer) -> bool {
         !self.is_zero()
     }
 }
@@ -145,21 +174,27 @@ pub impl ZeroablePlayerTrait of Zero<Player> {
 // Tests
 #[cfg(test)]
 mod tests {
-    use super::{Player, ZeroablePlayerTrait, PlayerImpl, PlayerTrait, PlayerAssert};
+    use super::{UniversePlayer, ZeroableUniversePlayerTrait, UniversePlayerImpl, UniversePlayerTrait, UniversePlayerAssert};
 
     #[test]
     #[available_gas(1000000)]
     fn test_player_new_constructor() {
-        let player = PlayerTrait::new(
+        let player = UniversePlayerTrait::new(
             0x123,      // id
             0xabc,      // user_id
             1736559000, // created_at
             100,        // fame
             150,        // charisma
             120,        // stamina
+            140,        // strength
+            160,        // agility
             200,        // intelligence
-            175,        // leadership
             50000,      // universe_currency
+            1,          // body_type
+            2,          // skin_color
+            0,          // beard_type
+            1,          // hair_type
+            1,          // hair_color
         );
 
         assert_eq!(player.id, 0x123, "Player ID should match");
@@ -170,33 +205,39 @@ mod tests {
         assert_eq!(player.fame, 100, "Fame should match");
         assert_eq!(player.charisma, 150, "Charisma should match");
         assert_eq!(player.stamina, 120, "Stamina should match");
+        assert_eq!(player.strength, 140, "Strength should match");
+        assert_eq!(player.agility, 160, "Agility should match");
         assert_eq!(player.intelligence, 200, "Intelligence should match");
-        assert_eq!(player.leadership, 175, "Leadership should match");
         assert_eq!(player.universe_currency, 50000, "Currency should match");
+        assert_eq!(player.body_type, 1, "Body type should match");
+        assert_eq!(player.skin_color, 2, "Skin color should match");
+        assert_eq!(player.beard_type, 0, "Beard type should match");
+        assert_eq!(player.hair_type, 1, "Hair type should match");
+        assert_eq!(player.hair_color, 1, "Hair color should match");
     }
 
     #[test]
     #[should_panic(expected: ('Player ID cannot be zero',))]
     fn test_player_creation_invalid_id() {
-        PlayerTrait::new(0, 0xabc, 1736559000, 100, 150, 120, 200, 175, 50000);
+        UniversePlayerTrait::new(0, 0xabc, 1736559000, 100, 150, 120, 140, 160, 200, 50000, 1, 2, 0, 1, 1);
     }
 
     #[test]
     #[should_panic(expected: ('User ID cannot be zero',))]
     fn test_player_creation_invalid_user_id() {
-        PlayerTrait::new(0x123, 0, 1736559000, 100, 150, 120, 200, 175, 50000);
+        UniversePlayerTrait::new(0x123, 0, 1736559000, 100, 150, 120, 140, 160, 200, 50000, 1, 2, 0, 1, 1);
     }
 
     #[test]
     #[should_panic(expected: ('Created timestamp must be > 0',))]
     fn test_player_creation_invalid_timestamp() {
-        PlayerTrait::new(0x123, 0xabc, 0, 100, 150, 120, 200, 175, 50000);
+        UniversePlayerTrait::new(0x123, 0xabc, 0, 100, 150, 120, 140, 160, 200, 50000, 1, 2, 0, 1, 1);
     }
 
     #[test]
     #[available_gas(1000000)]
     fn test_player_zero_values() {
-        let player: Player = ZeroablePlayerTrait::zero();
+        let player: UniversePlayer = ZeroableUniversePlayerTrait::zero();
 
         assert_eq!(player.id, 0, "Zero player ID should be 0");
         assert_eq!(player.user_id, 0, "Zero player user_id should be 0");
@@ -206,16 +247,22 @@ mod tests {
         assert_eq!(player.fame, 0, "Zero player fame should be 0");
         assert_eq!(player.charisma, 0, "Zero player charisma should be 0");
         assert_eq!(player.stamina, 0, "Zero player stamina should be 0");
+        assert_eq!(player.strength, 0, "Zero player strength should be 0");
+        assert_eq!(player.agility, 0, "Zero player agility should be 0");
         assert_eq!(player.intelligence, 0, "Zero player intelligence should be 0");
-        assert_eq!(player.leadership, 0, "Zero player leadership should be 0");
         assert_eq!(player.universe_currency, 0, "Zero player currency should be 0");
+        assert_eq!(player.body_type, 0, "Zero player body_type should be 0");
+        assert_eq!(player.skin_color, 0, "Zero player skin_color should be 0");
+        assert_eq!(player.beard_type, 0, "Zero player beard_type should be 0");
+        assert_eq!(player.hair_type, 0, "Zero player hair_type should be 0");
+        assert_eq!(player.hair_color, 0, "Zero player hair_color should be 0");
     }
 
     #[test]
     #[available_gas(1000000)]
     fn test_player_currency_operations() {
-        let mut player = PlayerTrait::new(
-            0x123, 0xabc, 1736559000, 100, 150, 120, 200, 175, 1000
+        let mut player = UniversePlayerTrait::new(
+            0x123, 0xabc, 1736559000, 100, 150, 120, 140, 160, 200, 1000, 1, 2, 0, 1, 1
         );
 
         player.add_currency(500);
@@ -228,8 +275,8 @@ mod tests {
     #[test]
     #[should_panic(expected: ('Insufficient currency',))]
     fn test_player_insufficient_currency() {
-        let mut player = PlayerTrait::new(
-            0x123, 0xabc, 1736559000, 100, 150, 120, 200, 175, 100
+        let mut player = UniversePlayerTrait::new(
+            0x123, 0xabc, 1736559000, 100, 150, 120, 140, 160, 200, 100, 1, 2, 0, 1, 1
         );
 
         player.spend_currency(200); // Should panic
@@ -238,8 +285,8 @@ mod tests {
     #[test]
     #[available_gas(1000000)]
     fn test_player_attribute_operations() {
-        let mut player = PlayerTrait::new(
-            0x123, 0xabc, 1736559000, 100, 150, 120, 200, 175, 1000
+        let mut player = UniversePlayerTrait::new(
+            0x123, 0xabc, 1736559000, 100, 150, 120, 140, 160, 200, 1000, 1, 2, 0, 1, 1
         );
 
         player.add_fame(50);
@@ -251,25 +298,28 @@ mod tests {
         player.add_stamina(30);
         assert_eq!(player.stamina, 150, "Stamina should increase by 30");
 
+        player.add_strength(35);
+        assert_eq!(player.strength, 175, "Strength should increase by 35");
+
+        player.add_agility(40);
+        assert_eq!(player.agility, 200, "Agility should increase by 40");
+
         player.add_intelligence(20);
         assert_eq!(player.intelligence, 220, "Intelligence should increase by 20");
-
-        player.add_leadership(15);
-        assert_eq!(player.leadership, 190, "Leadership should increase by 15");
     }
 
     #[test]
     #[available_gas(1000000)]
     fn test_player_assert_traits() {
         // Test with existing player
-        let existing_player = PlayerTrait::new(
-            0x456, 0xdef, 1736559000, 100, 150, 120, 200, 175, 1000
+        let existing_player = UniversePlayerTrait::new(
+            0x456, 0xdef, 1736559000, 100, 150, 120, 140, 160, 200, 1000, 1, 2, 0, 1, 1
         );
 
         existing_player.assert_exists(); // Should not panic
 
         // Test with zero player
-        let zero_player: Player = ZeroablePlayerTrait::zero();
+        let zero_player: UniversePlayer = ZeroableUniversePlayerTrait::zero();
         zero_player.assert_not_exists(); // Should not panic
         
         assert!(zero_player.is_zero(), "Zero player should be zero");
@@ -279,8 +329,8 @@ mod tests {
     #[test]
     #[available_gas(1000000)]
     fn test_player_timestamp_updates() {
-        let mut player = PlayerTrait::new(
-            0x123, 0xabc, 1736559000, 100, 150, 120, 200, 175, 1000
+        let mut player = UniversePlayerTrait::new(
+            0x123, 0xabc, 1736559000, 100, 150, 120, 140, 160, 200, 1000, 1, 2, 0, 1, 1
         );
 
         let initial_updated_at = player.last_updated_at;

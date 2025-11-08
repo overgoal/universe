@@ -6,11 +6,11 @@ use dojo::world::WorldStorage;
 use dojo::model::ModelStorage;
 
 // Models imports
-use full_starter_react::models::player::{Player, PlayerTrait, PlayerAssert, ZeroablePlayerTrait};
-use full_starter_react::models::user::{User, UserTrait, UserAssert, ZeroableUserTrait};
+use universe::models::universe_player::{UniversePlayer, UniversePlayerTrait, UniversePlayerAssert, ZeroableUniversePlayerTrait};
+use universe::models::user::{User, UserTrait, UserAssert, ZeroableUserTrait};
 
 // Helpers import
-use full_starter_react::helpers::timestamp::Timestamp;
+use universe::helpers::timestamp::Timestamp;
 
 // Store struct
 #[derive(Copy, Drop)]
@@ -25,13 +25,13 @@ pub impl StoreImpl of StoreTrait {
         Store { world: world }
     }
 
-    // --------- Player Getters ---------
-    fn read_player_from_id(self: Store, player_id: felt252) -> Player {
+    // --------- UniversePlayer Getters ---------
+    fn read_player_from_id(self: Store, player_id: felt252) -> UniversePlayer {
         self.world.read_model(player_id)
     }
 
     fn player_exists(self: Store, player_id: felt252) -> bool {
-        let player: Player = self.world.read_model(player_id);
+        let player: UniversePlayer = self.world.read_model(player_id);
         player.is_non_zero()
     }
 
@@ -51,7 +51,7 @@ pub impl StoreImpl of StoreTrait {
     }
 
     // --------- Setters ---------
-    fn write_player(mut self: Store, player: @Player) {
+    fn write_player(mut self: Store, player: @UniversePlayer) {
         self.world.write_model(player)
     }
     
@@ -60,23 +60,38 @@ pub impl StoreImpl of StoreTrait {
     }
     
     // --------- New entities ---------
-    fn create_player(mut self: Store, player_id: felt252, user_id: felt252) {
+    fn create_player(
+        mut self: Store, 
+        player_id: felt252, 
+        user_id: felt252,
+        body_type: u8,
+        skin_color: u8,
+        beard_type: u8,
+        hair_type: u8,
+        hair_color: u8
+    ) {
         let current_timestamp = get_block_timestamp();
         
         // Assert player doesn't already exist
         assert(!self.player_exists(player_id), 'Player already exists');
 
         // Create new player with starting attributes
-        let new_player = PlayerTrait::new(
+        let new_player = UniversePlayerTrait::new(
             player_id,
             user_id,
             current_timestamp,
             0,     // fame
             0,     // charisma  
             0,     // stamina
+            0,     // strength
+            0,     // agility
             0,     // intelligence
-            0,     // leadership
             0,     // universe_currency
+            body_type,
+            skin_color,
+            beard_type,
+            hair_type,
+            hair_color,
         );
 
         self.world.write_model(@new_player);
@@ -133,7 +148,7 @@ pub impl StoreImpl of StoreTrait {
     }
 
     // --------- Player Management ---------
-    fn update_player_attributes(mut self: Store, player_id: felt252, fame: u16, charisma: u16, stamina: u16, intelligence: u16, leadership: u16) {
+    fn update_player_attributes(mut self: Store, player_id: felt252, fame: u16, charisma: u16, stamina: u16, strength: u16, agility: u16, intelligence: u16) {
         let mut player = self.read_player_from_id(player_id);
         player.assert_exists();
         
@@ -141,8 +156,9 @@ pub impl StoreImpl of StoreTrait {
         player.add_fame(fame);
         player.add_charisma(charisma);
         player.add_stamina(stamina);
+        player.add_strength(strength);
+        player.add_agility(agility);
         player.add_intelligence(intelligence);
-        player.add_leadership(leadership);
         
         self.world.write_model(@player);
     }

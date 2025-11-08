@@ -1,9 +1,18 @@
 // Interface definition
 #[starknet::interface]
-pub trait IGame<T> {
+pub trait IUniverse<T> {
     // --------- Core gameplay methods ---------
-    fn create_player(ref self: T, player_id: felt252);
-    fn update_attributes(ref self: T, player_id: felt252, fame: u16, charisma: u16, stamina: u16, intelligence: u16, leadership: u16);
+    fn create_player(
+        ref self: T, 
+        player_id: felt252,
+        user_id: felt252,
+        body_type: u8,
+        skin_color: u8,
+        beard_type: u8,
+        hair_type: u8,
+        hair_color: u8
+    );
+    fn update_attributes(ref self: T, player_id: felt252, fame: u16, charisma: u16, stamina: u16, strength: u16, agility: u16, intelligence: u16);
     fn add_currency(ref self: T, player_id: felt252, amount: u128);
     fn spend_currency(ref self: T, player_id: felt252, amount: u128);
     fn record_login(ref self: T, player_id: felt252);
@@ -12,18 +21,18 @@ pub trait IGame<T> {
 #[dojo::contract]
 pub mod game {
     // Local import
-    use super::{IGame};
+    use super::{IUniverse};
 
 
 
     // Store import
-    use full_starter_react::store::{StoreTrait};
+    use universe::store::{StoreTrait};
 
 
 
     // Models import
-    use full_starter_react::models::player::{PlayerAssert};
-    use full_starter_react::models::user::{UserAssert};
+    use universe::models::universe_player::{UniversePlayerAssert};
+    use universe::models::user::{UserAssert};
 
 
 
@@ -49,33 +58,38 @@ pub mod game {
 
     // Implementation of the interface methods
     #[abi(embed_v0)]
-    impl GameImpl of IGame<ContractState> {
+    impl GameImpl of IUniverse<ContractState> {
         
         // Method to create a new player
-        fn create_player(ref self: ContractState, player_id: felt252) {
-            let mut world = self.world(@"full_starter_react");
+        fn create_player(
+            ref self: ContractState, 
+            player_id: felt252,
+            user_id: felt252,
+            body_type: u8,
+            skin_color: u8,
+            beard_type: u8,
+            hair_type: u8,
+            hair_color: u8
+        ) {
+            let mut world = self.world(@"universe");
             let store = StoreTrait::new(world);
 
-            // Get caller as user_id (assuming caller has a User account)
-            let caller = starknet::get_caller_address();
-            let user_id: felt252 = caller.into();
-
             // Create new player
-            store.create_player(player_id, user_id);
+            store.create_player(player_id, user_id, body_type, skin_color, beard_type, hair_type, hair_color);
         }
 
         // Method to update player attributes
-        fn update_attributes(ref self: ContractState, player_id: felt252, fame: u16, charisma: u16, stamina: u16, intelligence: u16, leadership: u16) {
-            let mut world = self.world(@"full_starter_react");
+        fn update_attributes(ref self: ContractState, player_id: felt252, fame: u16, charisma: u16, stamina: u16, strength: u16, agility: u16, intelligence: u16) {
+            let mut world = self.world(@"universe");
             let store = StoreTrait::new(world);
 
             // Update player attributes
-            store.update_player_attributes(player_id, fame, charisma, stamina, intelligence, leadership);
+            store.update_player_attributes(player_id, fame, charisma, stamina, strength, agility, intelligence);
         }
 
         // Method to add currency to player
         fn add_currency(ref self: ContractState, player_id: felt252, amount: u128) {
-            let mut world = self.world(@"full_starter_react");
+            let mut world = self.world(@"universe");
             let store = StoreTrait::new(world);
            
             // Add currency
@@ -84,7 +98,7 @@ pub mod game {
 
         // Method to spend player currency
         fn spend_currency(ref self: ContractState, player_id: felt252, amount: u128) {
-            let mut world = self.world(@"full_starter_react");
+            let mut world = self.world(@"universe");
             let store = StoreTrait::new(world);
 
             // Spend currency
@@ -93,7 +107,7 @@ pub mod game {
 
         // Method to record player login
         fn record_login(ref self: ContractState, player_id: felt252) {
-            let mut world = self.world(@"full_starter_react");
+            let mut world = self.world(@"universe");
             let store = StoreTrait::new(world);
 
             // Record login
