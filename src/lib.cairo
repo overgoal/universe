@@ -12,12 +12,11 @@ pub mod systems {
 }
 
 pub mod models {
-    pub mod player;
+    pub mod universe_player;
     pub mod user;
 }
 
 #[cfg(test)]
 pub mod tests {
     pub mod test_game;
-    pub mod utils;
 }
