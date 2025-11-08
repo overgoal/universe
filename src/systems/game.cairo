@@ -16,6 +16,7 @@ pub trait IUniverse<T> {
     fn add_currency(ref self: T, player_id: felt252, amount: u128);
     fn spend_currency(ref self: T, player_id: felt252, amount: u128);
     fn record_login(ref self: T, player_id: felt252);
+    fn assign_user(ref self: T, player_id: felt252, user_id: felt252);
 }
 
 #[dojo::contract]
@@ -112,6 +113,24 @@ pub mod game {
 
             // Record login
             store.record_player_login(player_id);
+        }
+
+        // Method to assign a user to a player
+        fn assign_user(ref self: ContractState, player_id: felt252, user_id: felt252) {
+            let mut world = self.world(@"universe");
+            let store = StoreTrait::new(world);
+
+            // Get the player
+            let mut player = store.read_player_from_id(player_id);
+            
+            // Validate player exists
+            player.assert_exists();
+            
+            // Update user_id
+            player.user_id = user_id;
+            
+            // Write back to storage
+            store.write_player(@player);
         }
 
     }
