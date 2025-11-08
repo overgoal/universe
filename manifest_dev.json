@@ -1,9 +1,9 @@
 {
   "world": {
     "class_hash": "0x57994b6a75fad550ca18b41ee82e2110e158c59028c4478109a67965a0e5b1e",
-    "address": "0x1e7962b214762b83272abb56d05d0823a3bf85caa58e5cbe8e55ea3023dff2",
-    "seed": "full_starter_react1",
-    "name": "Full-Starter-React",
+    "address": "0x73f377bcb4cee2e458351fee0d6ccb0eec3f4031de4fb990b45b03572ba84cd",
+    "seed": "universe1",
+    "name": "Universe",
     "entrypoints": [
       "uuid",
       "set_metadata",
@@ -1479,8 +1479,8 @@
   },
   "contracts": [
     {
-      "address": "0x282830ee5f4e56edf9a0df34430eb05ab6f0f2aa763d728482f83c82adf02ab",
-      "class_hash": "0x4d069db479544a07857932d348a1c3a29f77f1448986ae770ac99dc02f4a81e",
+      "address": "0x187f723fc8b8d48c372bfac2f9da9e5cffa34bdae58d99dc87ae9284886b173",
+      "class_hash": "0x2a2a05dddc4b775b5cd44cbf1c0201d32f028a25ececc34c25201e85f63b534",
       "abi": [
         {
           "type": "impl",
@@ -1542,11 +1542,11 @@
         {
           "type": "impl",
           "name": "GameImpl",
-          "interface_name": "full_starter_react::systems::game::IGame"
+          "interface_name": "universe::systems::game::IUniverse"
         },
         {
           "type": "interface",
-          "name": "full_starter_react::systems::game::IGame",
+          "name": "universe::systems::game::IUniverse",
           "items": [
             {
               "type": "function",
@@ -1555,6 +1555,30 @@
                 {
                   "name": "player_id",
                   "type": "core::felt252"
+                },
+                {
+                  "name": "user_id",
+                  "type": "core::felt252"
+                },
+                {
+                  "name": "body_type",
+                  "type": "core::integer::u8"
+                },
+                {
+                  "name": "skin_color",
+                  "type": "core::integer::u8"
+                },
+                {
+                  "name": "beard_type",
+                  "type": "core::integer::u8"
+                },
+                {
+                  "name": "hair_type",
+                  "type": "core::integer::u8"
+                },
+                {
+                  "name": "hair_color",
+                  "type": "core::integer::u8"
                 }
               ],
               "outputs": [],
@@ -1581,11 +1605,15 @@
                   "type": "core::integer::u16"
                 },
                 {
-                  "name": "intelligence",
+                  "name": "strength",
                   "type": "core::integer::u16"
                 },
                 {
-                  "name": "leadership",
+                  "name": "agility",
+                  "type": "core::integer::u16"
+                },
+                {
+                  "name": "intelligence",
                   "type": "core::integer::u16"
                 }
               ],
@@ -1730,7 +1758,7 @@
         },
         {
           "type": "event",
-          "name": "full_starter_react::systems::game::game::Event",
+          "name": "universe::systems::game::game::Event",
           "kind": "enum",
           "variants": [
             {
@@ -1747,8 +1775,8 @@
         }
       ],
       "init_calldata": [],
-      "tag": "full_starter_react-game",
-      "selector": "0x4c3a60c69390276b1cdfe902f6305743f3668c5ab9e68a96105dea78d8ccd61",
+      "tag": "universe-game",
+      "selector": "0x1ea68f1b5cdfd497dad0f005f921844b85671333bd50ae46b6052301daf118a",
       "systems": [
         "dojo_init",
         "create_player",
@@ -1764,15 +1792,15 @@
   "models": [
     {
       "members": [],
-      "class_hash": "0x166599bf8a491ac57915b7fd817fabf0e7c2180f6973221308efb2e45bb719e",
-      "tag": "full_starter_react-Player",
-      "selector": "0x13986cc36a0f8437378d1efa3068103f37b22361ff3cc31be99d50ddf2e4187"
+      "class_hash": "0xa31d7dbe1a2e5f05c52c469ce07850bbbc58915649b78ed895ff83697add76",
+      "tag": "universe-UniversePlayer",
+      "selector": "0xd9e8207b3ca2f166794035616da81efdb2f319d7e1b6a21be929d4eb1a1f0b"
     },
     {
       "members": [],
-      "class_hash": "0x602abf84722a433fbff04c02e84a9a59151a7b7815e8e4352456feabff14b1",
-      "tag": "full_starter_react-User",
-      "selector": "0x13f7b27c7499b3addaec78b7a273067addca85507a211cca2a06c488f442849"
+      "class_hash": "0x5b8073d087428ffe37a89389955c2bfc5cf990161debd1af1edcd3b65fa33b",
+      "tag": "universe-User",
+      "selector": "0x124e8c75f2ceacc319ee32b6f2c877774ac945c2c618cb96ec27e6a8b2703d8"
     }
   ],
   "events": [],
