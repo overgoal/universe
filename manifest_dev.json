@@ -1479,8 +1479,8 @@
   },
   "contracts": [
     {
-      "address": "0x187f723fc8b8d48c372bfac2f9da9e5cffa34bdae58d99dc87ae9284886b173",
-      "class_hash": "0x2a2a05dddc4b775b5cd44cbf1c0201d32f028a25ececc34c25201e85f63b534",
+      "address": "0x6f30435136e0effaabd531196d4cdad746b712df6e1f35b1a2acdce5d6c1863",
+      "class_hash": "0x6ec1d3d91e9007c3bae4d6e0a6e2ba716660138405ec7d30006c328b37b1abb",
       "abi": [
         {
           "type": "impl",
@@ -1663,6 +1663,22 @@
               ],
               "outputs": [],
               "state_mutability": "external"
+            },
+            {
+              "type": "function",
+              "name": "assign_user",
+              "inputs": [
+                {
+                  "name": "player_id",
+                  "type": "core::felt252"
+                },
+                {
+                  "name": "user_id",
+                  "type": "core::felt252"
+                }
+              ],
+              "outputs": [],
+              "state_mutability": "external"
             }
           ]
         },
@@ -1784,6 +1800,7 @@
         "add_currency",
         "spend_currency",
         "record_login",
+        "assign_user",
         "upgrade"
       ]
     }
