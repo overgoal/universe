@@ -19,7 +19,7 @@ pub trait IUniverse<T> {
     fn spend_currency(ref self: T, player_id: felt252, amount: u128);
     fn record_login(ref self: T, player_id: felt252);
     fn assign_user(ref self: T, player_id: felt252, user_id: felt252);
-    fn create_or_get_user(ref self: T, user_address: ContractAddress) -> felt252;
+    fn create_or_get_user(ref self: T, user_address: ContractAddress, username: felt252) -> felt252;
 }
 
 #[dojo::contract]
@@ -138,7 +138,7 @@ pub mod game {
         }
 
         // Method to create or get a user
-        fn create_or_get_user(ref self: ContractState, user_address: ContractAddress) -> felt252 {
+        fn create_or_get_user(ref self: ContractState, user_address: ContractAddress, username: felt252) -> felt252 {
             let mut world = self.world(@"universe");
             let store = StoreTrait::new(world);
             
@@ -148,9 +148,7 @@ pub mod game {
                 return user.username;
             }
             
-            // User doesn't exist, create with address as temporary username
-            // The username will be the address converted to felt252
-            let username: felt252 = user_address.into();
+            // User doesn't exist, create with provided username
             store.create_user_with_address(user_address, username);
             
             return username;

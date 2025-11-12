@@ -1479,8 +1479,8 @@
   },
   "contracts": [
     {
-      "address": "0x412ccf1e4f2b45a86496b2d0d7a3697f7d26ed5322e85ab72ca5a95c4a68500",
-      "class_hash": "0x6c8e68d076b6c82c77afc0309406ac2cbcb3d84a9608a9d29bfafd638eb8ede",
+      "address": "0x10b8813a88951c94a983da19a24a95bee08ee7de936297b63969f8d4dc3241d",
+      "class_hash": "0x7243bec05c7b8b869c83ce10b281dc860f5c508e6820703bcb194ccb13551ce",
       "abi": [
         {
           "type": "impl",
@@ -1687,6 +1687,10 @@
                 {
                   "name": "user_address",
                   "type": "core::starknet::contract_address::ContractAddress"
+                },
+                {
+                  "name": "username",
+                  "type": "core::felt252"
                 }
               ],
               "outputs": [

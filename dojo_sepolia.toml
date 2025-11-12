@@ -1,7 +1,7 @@
 [world]
 name = "Universe"
 description = "Universe is the base player management system for Overgoal. It handles player creation, attributes, and currency. Built using Dojo Engine on Starknet."
-seed = "universe_seed123"
+seed = "universe_seed"
 
 [namespace]
 default = "universe"
@@ -9,7 +9,7 @@ default = "universe"
 [env]
 rpc_url = "https://api.cartridge.gg/x/starknet/sepolia"
 # Your Cartridge controller address - replace with your actual address
-account_address = "0x45ac786967795b917490e6bb72a7ae5886e20a7904b6a188d3240ead8eeb825"
+account_address = "0x03de96DdA86aB0c07218683588ba2CcD7cE2C7a7f3C59179a21702644f92B6A6"
 
 [writers]
 "universe" = ["universe-game"]

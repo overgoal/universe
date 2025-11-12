@@ -47,8 +47,6 @@ pub impl StoreImpl of StoreTrait {
 
     fn user_exists(self: Store, user_address: ContractAddress) -> bool {
         let user: User = self.world.read_model(user_address);
-        // Check created_at instead of is_non_zero() because Dojo sets the key field (owner)
-        // even for non-existent models, making is_non_zero() unreliable
         user.created_at > 0
     }
 
