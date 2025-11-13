@@ -47,7 +47,7 @@ pub impl StoreImpl of StoreTrait {
 
     fn user_exists(self: Store, user_address: ContractAddress) -> bool {
         let user: User = self.world.read_model(user_address);
-        user.is_non_zero()
+        user.created_at > 0
     }
 
     // --------- Setters ---------

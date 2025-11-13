@@ -156,7 +156,7 @@ slot auth login
 ### 2️⃣ Torii Instance Deploy
 ```bash
 slot deployments create <instance_name> torii \
-  --sql.historical "full_starter_react-TrophyProgression" \
+  --sql.historical "universe-TrophyProgression" \
   --world <world_address> \
   --rpc https://api.cartridge.gg/x/starknet/sepolia
 ```

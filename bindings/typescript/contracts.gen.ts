@@ -1,0 +1,174 @@
+import { DojoProvider, DojoCall } from "@dojoengine/core";
+import { Account, AccountInterface, BigNumberish, CairoOption, CairoCustomEnum } from "starknet";
+import * as models from "./models.gen";
+
+export function setupWorld(provider: DojoProvider) {
+
+	const build_game_addCurrency_calldata = (playerId: BigNumberish, amount: BigNumberish): DojoCall => {
+		return {
+			contractName: "game",
+			entrypoint: "add_currency",
+			calldata: [playerId, amount],
+		};
+	};
+
+	const game_addCurrency = async (snAccount: Account | AccountInterface, playerId: BigNumberish, amount: BigNumberish) => {
+		try {
+			return await provider.execute(
+				snAccount,
+				build_game_addCurrency_calldata(playerId, amount),
+				"universe",
+			);
+		} catch (error) {
+			console.error(error);
+			throw error;
+		}
+	};
+
+	const build_game_assignUser_calldata = (playerId: BigNumberish, userId: BigNumberish): DojoCall => {
+		return {
+			contractName: "game",
+			entrypoint: "assign_user",
+			calldata: [playerId, userId],
+		};
+	};
+
+	const game_assignUser = async (snAccount: Account | AccountInterface, playerId: BigNumberish, userId: BigNumberish) => {
+		try {
+			return await provider.execute(
+				snAccount,
+				build_game_assignUser_calldata(playerId, userId),
+				"universe",
+			);
+		} catch (error) {
+			console.error(error);
+			throw error;
+		}
+	};
+
+	const build_game_createOrGetUser_calldata = (userAddress: string, username: BigNumberish): DojoCall => {
+		return {
+			contractName: "game",
+			entrypoint: "create_or_get_user",
+			calldata: [userAddress, username],
+		};
+	};
+
+	const game_createOrGetUser = async (snAccount: Account | AccountInterface, userAddress: string, username: BigNumberish) => {
+		try {
+			return await provider.execute(
+				snAccount,
+				build_game_createOrGetUser_calldata(userAddress, username),
+				"universe",
+			);
+		} catch (error) {
+			console.error(error);
+			throw error;
+		}
+	};
+
+	const build_game_createPlayer_calldata = (playerId: BigNumberish, userId: BigNumberish, bodyType: BigNumberish, skinColor: BigNumberish, beardType: BigNumberish, hairType: BigNumberish, hairColor: BigNumberish): DojoCall => {
+		return {
+			contractName: "game",
+			entrypoint: "create_player",
+			calldata: [playerId, userId, bodyType, skinColor, beardType, hairType, hairColor],
+		};
+	};
+
+	const game_createPlayer = async (snAccount: Account | AccountInterface, playerId: BigNumberish, userId: BigNumberish, bodyType: BigNumberish, skinColor: BigNumberish, beardType: BigNumberish, hairType: BigNumberish, hairColor: BigNumberish) => {
+		try {
+			return await provider.execute(
+				snAccount,
+				build_game_createPlayer_calldata(playerId, userId, bodyType, skinColor, beardType, hairType, hairColor),
+				"universe",
+			);
+		} catch (error) {
+			console.error(error);
+			throw error;
+		}
+	};
+
+	const build_game_recordLogin_calldata = (playerId: BigNumberish): DojoCall => {
+		return {
+			contractName: "game",
+			entrypoint: "record_login",
+			calldata: [playerId],
+		};
+	};
+
+	const game_recordLogin = async (snAccount: Account | AccountInterface, playerId: BigNumberish) => {
+		try {
+			return await provider.execute(
+				snAccount,
+				build_game_recordLogin_calldata(playerId),
+				"universe",
+			);
+		} catch (error) {
+			console.error(error);
+			throw error;
+		}
+	};
+
+	const build_game_spendCurrency_calldata = (playerId: BigNumberish, amount: BigNumberish): DojoCall => {
+		return {
+			contractName: "game",
+			entrypoint: "spend_currency",
+			calldata: [playerId, amount],
+		};
+	};
+
+	const game_spendCurrency = async (snAccount: Account | AccountInterface, playerId: BigNumberish, amount: BigNumberish) => {
+		try {
+			return await provider.execute(
+				snAccount,
+				build_game_spendCurrency_calldata(playerId, amount),
+				"universe",
+			);
+		} catch (error) {
+			console.error(error);
+			throw error;
+		}
+	};
+
+	const build_game_updateAttributes_calldata = (playerId: BigNumberish, fame: BigNumberish, charisma: BigNumberish, stamina: BigNumberish, strength: BigNumberish, agility: BigNumberish, intelligence: BigNumberish): DojoCall => {
+		return {
+			contractName: "game",
+			entrypoint: "update_attributes",
+			calldata: [playerId, fame, charisma, stamina, strength, agility, intelligence],
+		};
+	};
+
+	const game_updateAttributes = async (snAccount: Account | AccountInterface, playerId: BigNumberish, fame: BigNumberish, charisma: BigNumberish, stamina: BigNumberish, strength: BigNumberish, agility: BigNumberish, intelligence: BigNumberish) => {
+		try {
+			return await provider.execute(
+				snAccount,
+				build_game_updateAttributes_calldata(playerId, fame, charisma, stamina, strength, agility, intelligence),
+				"universe",
+			);
+		} catch (error) {
+			console.error(error);
+			throw error;
+		}
+	};
+
+
+
+	return {
+		game: {
+			addCurrency: game_addCurrency,
+			buildAddCurrencyCalldata: build_game_addCurrency_calldata,
+			assignUser: game_assignUser,
+			buildAssignUserCalldata: build_game_assignUser_calldata,
+			createOrGetUser: game_createOrGetUser,
+			buildCreateOrGetUserCalldata: build_game_createOrGetUser_calldata,
+			createPlayer: game_createPlayer,
+			buildCreatePlayerCalldata: build_game_createPlayer_calldata,
+			recordLogin: game_recordLogin,
+			buildRecordLoginCalldata: build_game_recordLogin_calldata,
+			spendCurrency: game_spendCurrency,
+			buildSpendCurrencyCalldata: build_game_spendCurrency_calldata,
+			updateAttributes: game_updateAttributes,
+			buildUpdateAttributesCalldata: build_game_updateAttributes_calldata,
+		},
+	};
+}

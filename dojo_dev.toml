@@ -6,12 +6,14 @@ seed = "universe1"
 default = "universe"
 
 [env]
-rpc_url = "http://localhost:5050/"
+rpc_url = "https://api.cartridge.gg/x/starknet/sepolia/"
 # Default account for katana with seed = 0
-account_address = "0x127fd5f1fe78a71f8bcd1fec63e3fe2f0486b6ecd5c86a0466c3a21fa5cfcec"
-private_key = "0xc5b2fcab997346f3ea1c00b002ecf6f382c5f9c9659a3894eb783c5320f912"
+account_address = "0x076F46177669B5002903772C49E00C9de8846Cf244ACB73918cFbbA5562EE832"
+private_key = "0x02b7314d3052da33e21a30f51355bf32a91ee89781998ca056e7f0924392a8c4"
 # world_address = "0x06171ed98331e849d6084bf2b3e3186a7ddf35574dd68cab4691053ee8ab69d7"
+world_address = "0x073f377bcb4cee2e458351fee0d6ccb0eec3f4031de4fb990b45b03572ba84cd"
 
 [writers]
 "universe-UniversePlayer" = ["universe-game"]
 "universe-User" = ["universe-game"]
+

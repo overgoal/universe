@@ -1479,8 +1479,8 @@
   },
   "contracts": [
     {
-      "address": "0x6f30435136e0effaabd531196d4cdad746b712df6e1f35b1a2acdce5d6c1863",
-      "class_hash": "0x6ec1d3d91e9007c3bae4d6e0a6e2ba716660138405ec7d30006c328b37b1abb",
+      "address": "0x46b1341119e65f3d1d48a75d846abf4f73419facb421d553a67c5d7b1ecf2eb",
+      "class_hash": "0x7bace5dfb809506a043b4263564c64f205c3afebccc1b01a69752d97a0476c3",
       "abi": [
         {
           "type": "impl",
@@ -1679,6 +1679,26 @@
               ],
               "outputs": [],
               "state_mutability": "external"
+            },
+            {
+              "type": "function",
+              "name": "create_or_get_user",
+              "inputs": [
+                {
+                  "name": "user_address",
+                  "type": "core::starknet::contract_address::ContractAddress"
+                },
+                {
+                  "name": "username",
+                  "type": "core::felt252"
+                }
+              ],
+              "outputs": [
+                {
+                  "type": "core::felt252"
+                }
+              ],
+              "state_mutability": "external"
             }
           ]
         },
@@ -1801,6 +1821,7 @@
         "spend_currency",
         "record_login",
         "assign_user",
+        "create_or_get_user",
         "upgrade"
       ]
     }
