@@ -46,19 +46,19 @@ export function setupWorld(provider: DojoProvider) {
 		}
 	};
 
-	const build_game_createOrGetUser_calldata = (userAddress: string): DojoCall => {
+	const build_game_createOrGetUser_calldata = (userAddress: string, username: BigNumberish): DojoCall => {
 		return {
 			contractName: "game",
 			entrypoint: "create_or_get_user",
-			calldata: [userAddress],
+			calldata: [userAddress, username],
 		};
 	};
 
-	const game_createOrGetUser = async (snAccount: Account | AccountInterface, userAddress: string) => {
+	const game_createOrGetUser = async (snAccount: Account | AccountInterface, userAddress: string, username: BigNumberish) => {
 		try {
 			return await provider.execute(
 				snAccount,
-				build_game_createOrGetUser_calldata(userAddress),
+				build_game_createOrGetUser_calldata(userAddress, username),
 				"universe",
 			);
 		} catch (error) {
