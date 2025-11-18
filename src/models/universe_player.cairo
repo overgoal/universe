@@ -21,7 +21,7 @@ pub struct UniversePlayer {
     pub skin_color: u8,                 // Skin color (0, 1, or 2)
     pub beard_type: u8,                 // Beard type (0 or 1)
     pub hair_type: u8,                  // Hair type (0, 1, or 2)
-    pub hair_color: u8,                 // Hair color (0 or 1)
+    pub hair_color: u8,                 // Hair color (0-4)
 }
 
 // Traits Implementations
@@ -46,7 +46,7 @@ pub impl UniversePlayerImpl of UniversePlayerTrait {
     ) -> UniversePlayer {
         // Validate inputs
         assert(id != 0, 'Player ID cannot be zero');
-        assert(user_id != 0, 'User ID cannot be zero');
+        // user_id can be 0 for unclaimed players
         assert(created_at > 0, 'Created timestamp must be > 0');
 
         UniversePlayer {
@@ -162,7 +162,8 @@ pub impl ZeroableUniversePlayerTrait of Zero<UniversePlayer> {
 
     #[inline(always)]
     fn is_zero(self: @UniversePlayer) -> bool {
-       *self.user_id == 0 && *self.created_at == 0
+       // Check if player doesn't exist (created_at is the indicator)
+       *self.created_at == 0
     }
 
     #[inline(always)]
@@ -223,9 +224,11 @@ mod tests {
     }
 
     #[test]
-    #[should_panic(expected: ('User ID cannot be zero',))]
-    fn test_player_creation_invalid_user_id() {
-        UniversePlayerTrait::new(0x123, 0, 1736559000, 100, 150, 120, 140, 160, 200, 50000, 1, 2, 0, 1, 1);
+    #[available_gas(1000000)]
+    fn test_player_creation_with_zero_user_id() {
+        // user_id can be 0 for unclaimed players
+        let player = UniversePlayerTrait::new(0x123, 0, 1736559000, 100, 150, 120, 140, 160, 200, 50000, 1, 2, 0, 1, 1);
+        assert_eq!(player.user_id, 0, "User ID can be zero for unclaimed players");
     }
 
     #[test]

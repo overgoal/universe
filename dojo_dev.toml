@@ -1,6 +1,6 @@
 [world]
 name = "Universe"
-seed = "universe1"
+seed = "universe2"
 
 [namespace]
 default = "universe"

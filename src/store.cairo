@@ -8,6 +8,11 @@ use dojo::model::ModelStorage;
 // Models imports
 use universe::models::universe_player::{UniversePlayer, UniversePlayerTrait, UniversePlayerAssert, ZeroableUniversePlayerTrait};
 use universe::models::user::{User, UserTrait, UserAssert, ZeroableUserTrait};
+use universe::models::season::{Season, SeasonTrait, SeasonAssert};
+use universe::models::club::{Club, ClubTrait, AssertClubTrait};
+use universe::models::season_club::{SeasonClub, SeasonClubTrait, SeasonClubAssert};
+use universe::models::overgoal_player::{OvergoalPlayer, OvergoalPlayerTrait, OvergoalPlayerAssert};
+use universe::models::season_player::{SeasonPlayer, SeasonPlayerTrait, SeasonPlayerAssert};
 
 // Helpers import
 use universe::helpers::timestamp::Timestamp;
@@ -189,6 +194,166 @@ pub impl StoreImpl of StoreTrait {
         player.update_login_time(current_timestamp);
         
         self.world.write_model(@player);
+    }
+
+    // --------- Timestamp Management ---------
+    fn update_user_timestamps(mut self: Store, user_address: ContractAddress) {
+        let mut user = self.read_user_from_address(user_address);
+        user.assert_exists();
+        
+        // Note: User model doesn't have last_updated_at/last_login_at
+        // If we need to track this, we should look at their players
+        // For now, this is a placeholder that can be extended
+    }
+
+    // --------- Season Management ---------
+    fn read_season(self: Store, season_id: felt252) -> Season {
+        self.world.read_model(season_id)
+    }
+
+    fn increase_season_prize_pool(mut self: Store, season_id: felt252, amount: u128) {
+        let mut season = self.read_season(season_id);
+        season.assert_exists();
+        
+        season.increase_prize_pool(amount);
+        
+        self.world.write_model(@season);
+    }
+
+    fn create_season(mut self: Store, season_id: felt252, name: ByteArray, start_date: u64, end_date: u64, prize_pool: u128) {
+        // Create new season
+        let new_season = SeasonTrait::new(season_id, name, start_date, end_date, prize_pool);
+        
+        self.world.write_model(@new_season);
+    }
+
+    // --------- Club Management ---------
+    fn read_club(self: Store, club_id: felt252) -> Club {
+        self.world.read_model(club_id)
+    }
+
+    fn create_club(mut self: Store, club_id: felt252, name: ByteArray) {
+        // Create new club
+        let new_club = ClubTrait::new(club_id, name);
+        
+        self.world.write_model(@new_club);
+    }
+
+    // --------- SeasonClub Management ---------
+    fn create_season_club(mut self: Store, season_club_id: felt252, season_id: felt252, club_id: felt252) {
+        // Create new season_club with default values for manager_id, coach_id, and stats
+        let new_season_club = SeasonClubTrait::new(
+            season_club_id,
+            season_id,
+            club_id,
+            0, // manager_id - will be set later
+            0, // coach_id - will be set later
+            0, // season_points
+            0, // offense
+            0, // defense
+            0  // intensity
+        );
+        
+        self.world.write_model(@new_season_club);
+    }
+
+    // --------- UniversePlayer Management (for setup) ---------
+    fn create_universe_player(
+        mut self: Store,
+        player_id: felt252,
+        created_at: u64,
+        fame: u16,
+        charisma: u16,
+        stamina: u16,
+        strength: u16,
+        agility: u16,
+        intelligence: u16,
+        universe_currency: u128,
+        body_type: u8,
+        skin_color: u8,
+        beard_type: u8,
+        hair_type: u8,
+        hair_color: u8
+    ) {
+        // Create new universe player with user_id = 0 (unclaimed)
+        let new_player = UniversePlayerTrait::new(
+            player_id,
+            0, // user_id = 0 for unclaimed players
+            created_at,
+            fame,
+            charisma,
+            stamina,
+            strength,
+            agility,
+            intelligence,
+            universe_currency,
+            body_type,
+            skin_color,
+            beard_type,
+            hair_type,
+            hair_color
+        );
+        
+        self.world.write_model(@new_player);
+    }
+
+    // --------- OvergoalPlayer Management (for setup) ---------
+    fn create_overgoal_player(
+        mut self: Store,
+        overgoal_player_id: felt252,
+        universe_player_id: felt252,
+        energy: u16,
+        speed: u16,
+        leadership: u16,
+        pass: u16,
+        shoot: u16,
+        freekick: u16,
+        visor_type: u8,
+        visor_color: u8,
+        player_category: ByteArray,
+        player_name: ByteArray,
+        player_description: ByteArray
+    ) {
+        // Create new overgoal player (goal_currency is not in constructor, will be set to default)
+        let new_overgoal_player = OvergoalPlayerTrait::new(
+            overgoal_player_id,
+            universe_player_id,
+            energy,
+            speed,
+            leadership,
+            pass,
+            shoot,
+            freekick,
+            visor_type,
+            visor_color,
+            player_category,
+            player_name,
+            player_description
+        );
+        
+        self.world.write_model(@new_overgoal_player);
+    }
+
+    // --------- SeasonPlayer Management (for setup) ---------
+    fn create_season_player(
+        mut self: Store,
+        season_player_id: felt252,
+        season_id: felt252,
+        season_club_id: felt252,
+        overgoal_player_id: felt252
+    ) {
+        // Create new season player with default values for relationships
+        // (season_points, matches_won, matches_lost will be set to defaults)
+        let new_season_player = SeasonPlayerTrait::new(
+            season_player_id,
+            season_id,
+            season_club_id,
+            overgoal_player_id,
+            0, // team_relationship - starts at 0
+            0  // fans_relationship - starts at 0
+        );
+        
+        self.world.write_model(@new_season_player);
     }
     
 }

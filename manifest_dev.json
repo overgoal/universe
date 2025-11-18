@@ -2,7 +2,7 @@
   "world": {
     "class_hash": "0x57994b6a75fad550ca18b41ee82e2110e158c59028c4478109a67965a0e5b1e",
     "address": "0x73f377bcb4cee2e458351fee0d6ccb0eec3f4031de4fb990b45b03572ba84cd",
-    "seed": "universe1",
+    "seed": "universe2",
     "name": "Universe",
     "entrypoints": [
       "uuid",
@@ -1480,7 +1480,7 @@
   "contracts": [
     {
       "address": "0x46b1341119e65f3d1d48a75d846abf4f73419facb421d553a67c5d7b1ecf2eb",
-      "class_hash": "0x7bace5dfb809506a043b4263564c64f205c3afebccc1b01a69752d97a0476c3",
+      "class_hash": "0x386ff685f5b80185d53fea0d35a650d5bd36767d0d7e16ae200d35fc76a83f7",
       "abi": [
         {
           "type": "impl",
@@ -1543,6 +1543,20 @@
           "type": "impl",
           "name": "GameImpl",
           "interface_name": "universe::systems::game::IUniverse"
+        },
+        {
+          "type": "enum",
+          "name": "core::bool",
+          "variants": [
+            {
+              "name": "False",
+              "type": "()"
+            },
+            {
+              "name": "True",
+              "type": "()"
+            }
+          ]
         },
         {
           "type": "interface",
@@ -1699,6 +1713,234 @@
                 }
               ],
               "state_mutability": "external"
+            },
+            {
+              "type": "function",
+              "name": "claim_player",
+              "inputs": [
+                {
+                  "name": "player_id",
+                  "type": "core::felt252"
+                }
+              ],
+              "outputs": [
+                {
+                  "type": "core::bool"
+                }
+              ],
+              "state_mutability": "external"
+            },
+            {
+              "type": "function",
+              "name": "create_club",
+              "inputs": [
+                {
+                  "name": "club_id",
+                  "type": "core::felt252"
+                },
+                {
+                  "name": "name",
+                  "type": "core::byte_array::ByteArray"
+                }
+              ],
+              "outputs": [],
+              "state_mutability": "external"
+            },
+            {
+              "type": "function",
+              "name": "create_season",
+              "inputs": [
+                {
+                  "name": "season_id",
+                  "type": "core::felt252"
+                },
+                {
+                  "name": "name",
+                  "type": "core::byte_array::ByteArray"
+                },
+                {
+                  "name": "start_date",
+                  "type": "core::integer::u64"
+                },
+                {
+                  "name": "end_date",
+                  "type": "core::integer::u64"
+                },
+                {
+                  "name": "prize_pool",
+                  "type": "core::integer::u128"
+                }
+              ],
+              "outputs": [],
+              "state_mutability": "external"
+            },
+            {
+              "type": "function",
+              "name": "create_season_club",
+              "inputs": [
+                {
+                  "name": "season_club_id",
+                  "type": "core::felt252"
+                },
+                {
+                  "name": "season_id",
+                  "type": "core::felt252"
+                },
+                {
+                  "name": "club_id",
+                  "type": "core::felt252"
+                }
+              ],
+              "outputs": [],
+              "state_mutability": "external"
+            },
+            {
+              "type": "function",
+              "name": "create_universe_player",
+              "inputs": [
+                {
+                  "name": "player_id",
+                  "type": "core::felt252"
+                },
+                {
+                  "name": "created_at",
+                  "type": "core::integer::u64"
+                },
+                {
+                  "name": "fame",
+                  "type": "core::integer::u16"
+                },
+                {
+                  "name": "charisma",
+                  "type": "core::integer::u16"
+                },
+                {
+                  "name": "stamina",
+                  "type": "core::integer::u16"
+                },
+                {
+                  "name": "strength",
+                  "type": "core::integer::u16"
+                },
+                {
+                  "name": "agility",
+                  "type": "core::integer::u16"
+                },
+                {
+                  "name": "intelligence",
+                  "type": "core::integer::u16"
+                },
+                {
+                  "name": "universe_currency",
+                  "type": "core::integer::u128"
+                },
+                {
+                  "name": "body_type",
+                  "type": "core::integer::u8"
+                },
+                {
+                  "name": "skin_color",
+                  "type": "core::integer::u8"
+                },
+                {
+                  "name": "beard_type",
+                  "type": "core::integer::u8"
+                },
+                {
+                  "name": "hair_type",
+                  "type": "core::integer::u8"
+                },
+                {
+                  "name": "hair_color",
+                  "type": "core::integer::u8"
+                }
+              ],
+              "outputs": [],
+              "state_mutability": "external"
+            },
+            {
+              "type": "function",
+              "name": "create_overgoal_player",
+              "inputs": [
+                {
+                  "name": "overgoal_player_id",
+                  "type": "core::felt252"
+                },
+                {
+                  "name": "universe_player_id",
+                  "type": "core::felt252"
+                },
+                {
+                  "name": "energy",
+                  "type": "core::integer::u16"
+                },
+                {
+                  "name": "speed",
+                  "type": "core::integer::u16"
+                },
+                {
+                  "name": "leadership",
+                  "type": "core::integer::u16"
+                },
+                {
+                  "name": "pass",
+                  "type": "core::integer::u16"
+                },
+                {
+                  "name": "shoot",
+                  "type": "core::integer::u16"
+                },
+                {
+                  "name": "freekick",
+                  "type": "core::integer::u16"
+                },
+                {
+                  "name": "visor_type",
+                  "type": "core::integer::u8"
+                },
+                {
+                  "name": "visor_color",
+                  "type": "core::integer::u8"
+                },
+                {
+                  "name": "player_category",
+                  "type": "core::byte_array::ByteArray"
+                },
+                {
+                  "name": "player_name",
+                  "type": "core::byte_array::ByteArray"
+                },
+                {
+                  "name": "player_description",
+                  "type": "core::byte_array::ByteArray"
+                }
+              ],
+              "outputs": [],
+              "state_mutability": "external"
+            },
+            {
+              "type": "function",
+              "name": "create_season_player",
+              "inputs": [
+                {
+                  "name": "season_player_id",
+                  "type": "core::felt252"
+                },
+                {
+                  "name": "season_id",
+                  "type": "core::felt252"
+                },
+                {
+                  "name": "season_club_id",
+                  "type": "core::felt252"
+                },
+                {
+                  "name": "overgoal_player_id",
+                  "type": "core::felt252"
+                }
+              ],
+              "outputs": [],
+              "state_mutability": "external"
             }
           ]
         },
@@ -1822,12 +2064,49 @@
         "record_login",
         "assign_user",
         "create_or_get_user",
+        "claim_player",
+        "create_club",
+        "create_season",
+        "create_season_club",
+        "create_universe_player",
+        "create_overgoal_player",
+        "create_season_player",
         "upgrade"
       ]
     }
   ],
   "libraries": [],
   "models": [
+    {
+      "members": [],
+      "class_hash": "0x2e3a11f1613da6ec449f61fe9df64d8aedda744cefcb217cf8f4aea6a1c066f",
+      "tag": "universe-Club",
+      "selector": "0x79edfab01ea6cba42228bb642a7cee55f6f675c265b9f9ca62c140345237d45"
+    },
+    {
+      "members": [],
+      "class_hash": "0x4055e2168fedc9c82990df508b441dc3c46230914030ff8cb984a6583691d97",
+      "tag": "universe-OvergoalPlayer",
+      "selector": "0x1cc1c9d62ae29211a38f9d96e8c91967cb793b6c1409098fa4bd1a3ea45c8dd"
+    },
+    {
+      "members": [],
+      "class_hash": "0x1f67ee829c39dc0080753e5053722aecc0b0d86b62ebf105847d7403157c812",
+      "tag": "universe-Season",
+      "selector": "0x30c3c4188e67e06ee3caebc21037f172d2ce2107d04d7e8c14a97839dea2978"
+    },
+    {
+      "members": [],
+      "class_hash": "0x63b43c054d1b7b9133508bd0e20b34c4da793f7665694bcea3591b54bfb74e0",
+      "tag": "universe-SeasonClub",
+      "selector": "0x470d829570165a7003a0b0d653a6eacd9acee755352afe5b03e0141477b57d"
+    },
+    {
+      "members": [],
+      "class_hash": "0x70fa24a35c9d5ab848bbb6bc64e51da1492c4c0cbd7f1f3d312bc554db8af56",
+      "tag": "universe-SeasonPlayer",
+      "selector": "0x5a9876565ca99340b3f1f169e6b6e649b300e92d41a3137d707e90dd9014c09"
+    },
     {
       "members": [],
       "class_hash": "0xa31d7dbe1a2e5f05c52c469ce07850bbbc58915649b78ed895ff83697add76",

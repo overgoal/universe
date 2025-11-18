@@ -1,6 +1,6 @@
 [world]
 name = "Universe"
-seed = "universe1"
+seed = "universe2"
 
 [namespace]
 default = "universe"
@@ -10,7 +10,6 @@ rpc_url = "https://api.cartridge.gg/x/starknet/sepolia/"
 # Default account for katana with seed = 0
 account_address = "0x076F46177669B5002903772C49E00C9de8846Cf244ACB73918cFbbA5562EE832"
 private_key = "0x02b7314d3052da33e21a30f51355bf32a91ee89781998ca056e7f0924392a8c4"
-# world_address = "0x06171ed98331e849d6084bf2b3e3186a7ddf35574dd68cab4691053ee8ab69d7"
 world_address = "0x073f377bcb4cee2e458351fee0d6ccb0eec3f4031de4fb990b45b03572ba84cd"
 
 [writers]

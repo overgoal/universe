@@ -1,5 +1,5 @@
 # The world address to index
-world_address = ""
+world_address = "0x073f377bcb4cee2e458351fee0d6ccb0eec3f4031de4fb990b45b03572ba84cd"
 
 # Default RPC URL configuration
 rpc = "https://api.cartridge.gg/x/starknet/sepolia"
@@ -17,3 +17,4 @@ raw = true
 
 [sql]
 historical = ["universe-TrophyProgression"]
+
